@@ -67,7 +67,6 @@ class FakeDB():
 
 
         #build
-
         self.test_runs.append(TestRun(build="4.4.0-3050", category='n1ql', test='n1ql_fdb_q2_stale_false',
                                       test_title='FDB,Q2, stale_false',
                                       metrics=[Metric('Throughput', 256002, 'Throughput, Average, ops/sec',True),
