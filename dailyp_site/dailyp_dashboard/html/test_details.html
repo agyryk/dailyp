@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dayily Sanity Dashboard  - Test details</title>
+</head>
+<body>
+
+
+<b>Builds:</b>
+
+<form action="/dailyp/" method="post">
+    {% csrf_token %}
+    {{ form_buildsSelector }}
+    <input type="submit" value="Submit" />
+</form>
+<br />
+
+<b>Category:  </b> {{model.category_name}} <br />
+<b>Test:  </b> {{model.test_title}}  <br />
+<br />
+<b>Status:</b>
+
+    <table border="1">
+        {% for item in model.summary %}
+        <tr>
+            <td>&nbsp;{{item.description}}&nbsp;</td>
+            {% if item.status == "FAILED" %}
+            <td><b><font color="red">{{item.status}}</font></b></td>
+            {% else %}
+            <td><b><font color="green">{{item.status}}</font></b></td>
+            {% endif %}
+            <td>Baseline: {{item.baseline}} <br/>
+                Current: {{item.current}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+<br />
+<br />
+<br />
+<br />
+
+Debug message {{ model.debug_message }}
+
+
+
+</body>
+</html>
+
