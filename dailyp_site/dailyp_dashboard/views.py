@@ -4,6 +4,7 @@ import models
 import db_fake
 from settings import DailypSettings
 from bigtree import BigTree
+import db_cbs
 
 
 class FormBuildsSelector(forms.Form):
@@ -41,7 +42,11 @@ def homeView(request):
     home_model.debug_message = str(len(home_model.summary))
     for category_node in bigtree.root:
         home_model.summary.append({'name':category_node.name, 'status':category_node.status})
-    return render (request, "dashboard.html", {"model" : home_model, "form_buildsSelector":buildSelectorForm})
+
+    cbs = db_cbs.CBS()
+    if cbs.connect():
+        home_model.debug_message = cbs.get_all_builds()
+    return render(request, "dashboard.html", {"model": home_model, "form_buildsSelector":buildSelectorForm})
 
 
 def categoryView(request):

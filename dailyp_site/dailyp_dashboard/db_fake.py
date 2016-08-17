@@ -1,5 +1,3 @@
-
-
 class TestRun():
     def __init__(self, build='default',category='default',test='default', test_title="default", metrics=[]):
         self.build = build
