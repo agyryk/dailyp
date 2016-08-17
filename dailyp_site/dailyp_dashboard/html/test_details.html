@@ -30,8 +30,18 @@
             {% else %}
             <td><b><font color="green">{{item.status}}</font></b></td>
             {% endif %}
-            <td>Baseline: {{item.baseline}} <br/>
-                Current: {{item.current}}</td>
+            <td>
+                <table border="0">
+                    <tr>
+                        <td>Baseline:</td>
+                        <td>{{item.baseline}}</td>
+                    </tr>
+                    <tr>
+                        <td>Current:</td>
+                        <td>{{item.current}}</td>
+                    </tr>
+                </table>
+            </td>
         </tr>
         {% endfor %}
     </table>
