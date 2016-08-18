@@ -45,7 +45,7 @@ def homeView(request):
 
     cbs = db_cbs.CBS()
     if cbs.connect():
-        home_model.debug_message = cbs.get_all_builds()
+        home_model.debug_message = cbs.get_metrics_by_test('4.1.1-0000','n1ql','n1ql_fdb_q2_stale_false')
     return render(request, "dashboard.html", {"model": home_model, "form_buildsSelector":buildSelectorForm})
 
 
