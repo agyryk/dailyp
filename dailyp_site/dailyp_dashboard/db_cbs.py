@@ -27,11 +27,11 @@ class CBS():
         result = []
         logger = open("dailyp_queries.log", 'a')
         start = datetime.datetime.now(timezone('US/Pacific'))
-        for row in self.bucket.n1ql_query("select distinct `build` from perf_daily"):
+        builds = self.bucket.n1ql_query("select distinct `build` from perf_daily where meta().id is not missing")
+        for row in builds:
             result.append(row['build'].encode('utf8'))
-
         stop = datetime.datetime.now(timezone('US/Pacific'))
-        logger.write(str(stop-start)[:-3] + " ms : select distinct `build` from perf_daily")
+        logger.write(str(stop-start)[:-3] + " ms : select distinct `build` from perf_daily where meta().id is not missing")
         logger.write("\n")
         logger.close()
         return result
@@ -92,10 +92,20 @@ class CBS():
 
     # Debug message [{u'metrics': [{u'value': 256002, u'description': u'Throughput, Average, ops/sec', u'name': u'Throughput', u'larger_is_better': True}, {u'value': 123.02, u'description': u'95 percentile latency', u'name': u'Latency', u'larger_is_better': False}]}]
 
-    #                     metrics.append([metric.name, metric.value, metric.description, metric.larger_is_better])
+    #                     metrics.append([metric.name, metric.value, metric.description, metric.larger_is_better]
 
 
 
+    """
+    def post_run(self,test_run_dict):
+        build = test_run_dict['build']
+        category = test_run_dict['category']
+        test = test_run_dict['test']
+        test_title = test_run_dict['test_title']
+        metrics = test_run_dict['metrics']
+
+
+    """
 
 
     def load_tmp_data(self):
@@ -260,3 +270,4 @@ class CBS():
                }
         #json_doc = json.dumps(doc)
         self.bucket.upsert(id,doc)
+
