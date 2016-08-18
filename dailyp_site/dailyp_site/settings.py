@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dailyp_dashboard.models',
     'dailyp_dashboard',
+    'rest_framework',
 ]
 
 MIDDLEWARE_CLASSES = [

@@ -26,8 +26,10 @@
             <td>&nbsp;<a href=category?category={{item.name}}&b={{model.baseline_build}}&a={{model.active_build}}>{{item.name}}</a>&nbsp;</td>
             {% if item.status == "FAILED" %}
             <td><b><font color="red">{{item.status}}</font></b></td>
-            {% else %}
+            {% elif item.status == "PASSED" %}
             <td><b><font color="green">{{item.status}}</font></b></td>
+            {% else %}
+            <td><font color="DarkOrange">{{item.status}}</font></td>
             {% endif %}
         </tr>
         {% endfor %}

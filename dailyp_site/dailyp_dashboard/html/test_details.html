@@ -27,8 +27,10 @@
             <td>&nbsp;{{item.description}}&nbsp;</td>
             {% if item.status == "FAILED" %}
             <td><b><font color="red">{{item.status}}</font></b></td>
-            {% else %}
+            {% elif item.status == "PASSED" %}
             <td><b><font color="green">{{item.status}}</font></b></td>
+            {% else %}
+            <td><font color="DarkOrange">{{item.status}}</font></td>
             {% endif %}
             <td>
                 <table border="0">

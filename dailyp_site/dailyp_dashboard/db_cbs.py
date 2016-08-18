@@ -13,10 +13,6 @@ class CBS():
         return
 
     def connect(self):
-        logger = open("dailyp_queries.log", 'a')
-        logger.write("-- conencting at --" + datetime.datetime.now(timezone('US/Pacific')).strftime("%Y_%m_%d-%H:%M:%S.%f"))
-        logger.write("\n")
-        logger.close()
         try:
             self.bucket = Bucket('couchbase://cbmonitor.sc.couchbase.com/perf_daily')
         except:
@@ -25,87 +21,35 @@ class CBS():
 
     def get_all_builds(self):
         result = []
-        logger = open("dailyp_queries.log", 'a')
-        start = datetime.datetime.now(timezone('US/Pacific'))
         builds = self.bucket.n1ql_query("select distinct `build` from perf_daily where meta().id is not missing")
         for row in builds:
             result.append(row['build'].encode('utf8'))
-        stop = datetime.datetime.now(timezone('US/Pacific'))
-        logger.write(str(stop-start)[:-3] + " ms : select distinct `build` from perf_daily where meta().id is not missing")
-        logger.write("\n")
-        logger.close()
         return result
 
     def get_cats_by_build(self, build_number):
         result = []
-
-        logger = open("dailyp_queries.log", 'a')
-        start = datetime.datetime.now(timezone('US/Pacific'))
-
         for row in self.bucket.n1ql_query("select category from perf_daily where `build`='" + build_number + "'"):
             result.append(row['category'].encode('utf8'))
-
-        stop = datetime.datetime.now(timezone('US/Pacific'))
-        logger.write(str(stop-start)[:-3] + " ms : select category from perf_daily where `build`='" + build_number + "'")
-        logger.write("\n")
-        logger.close()
-
         return set(result)
 
     def get_tests_by_cat(self, build_number, category):
         result = []
-
-        logger = open("dailyp_queries.log", 'a')
-        start = datetime.datetime.now(timezone('US/Pacific'))
-
         for row in self.bucket.n1ql_query("select test, test_title from perf_daily where `build`='" + build_number
                                             + "' and category='" + category + "'"):
             result.append([row['test'].encode('utf8'), row['test_title'].encode('utf8')])
-
-        stop = datetime.datetime.now(timezone('US/Pacific'))
-        logger.write(str(stop-start)[:-3] + " ms : select test, test_title from perf_daily where `build`='" + build_number
-                                            + "' and category='" + category + "'")
-        logger.write("\n")
-        logger.close()
-
         return result
 
     def get_metrics_by_test(self, build_number, category, test):
         result = []
-
-        logger = open("dailyp_queries.log", 'a')
-        start = datetime.datetime.now(timezone('US/Pacific'))
-
         for row in self.bucket.n1ql_query("select metrics from perf_daily where `build`='" + build_number
                                           + "' and category='" + category + "' and test='" + test + "'"):
             for metric in row['metrics']:
                 result.append([metric['name'].encode('utf8'), metric['value'],
                                metric['description'].encode('utf8'), metric['larger_is_better']])
-
-        stop = datetime.datetime.now(timezone('US/Pacific'))
-        logger.write(str(stop-start)[:-3] + " ms : select metrics from perf_daily where `build`='" + build_number
-                                          + "' and category='" + category + "' and test='" + test + "'")
-        logger.write("\n")
-        logger.close()
-
         return result
 
-    # Debug message [{u'metrics': [{u'value': 256002, u'description': u'Throughput, Average, ops/sec', u'name': u'Throughput', u'larger_is_better': True}, {u'value': 123.02, u'description': u'95 percentile latency', u'name': u'Latency', u'larger_is_better': False}]}]
-
-    #                     metrics.append([metric.name, metric.value, metric.description, metric.larger_is_better]
-
-
-
-    """
     def post_run(self,test_run_dict):
-        build = test_run_dict['build']
-        category = test_run_dict['category']
-        test = test_run_dict['test']
-        test_title = test_run_dict['test_title']
-        metrics = test_run_dict['metrics']
-
-
-    """
+        self.bucket.upsert(id,test_run_dict)
 
 
     def load_tmp_data(self):
