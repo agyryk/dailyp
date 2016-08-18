@@ -1,5 +1,5 @@
 import bigtree_nodes
-import db_fake
+import db_cbs
 
 
 class BigTree():
@@ -8,22 +8,21 @@ class BigTree():
     STATUS_PASSED = "PASSED"
     STATUS_FAILED = "FAILED"
 
-    def __init__(self, a_build, b_build):
-        self.a_tree = self.load_from_build(a_build,"active")
-        self.b_tree = self.load_from_build(b_build,"baseline")
+    def __init__(self, cbs, a_build, b_build):
+        self.a_tree = self.load_from_build(cbs, a_build, "active")
+        self.b_tree = self.load_from_build(cbs, b_build, "baseline")
         self.root = []
         self.merge_tree()
 
-    def load_from_build(self,build,marker):
+    def load_from_build(self,cbs, build,marker):
         tree = []
-        fake_db = db_fake.FakeDB()
-        categories = fake_db.get_cats(build)
+        categories = cbs.get_cats_by_build(build)
         for category in categories:
             category_node = bigtree_nodes.CategoryNode(category, marker, [])
-            tests = fake_db.get_tests_by_cat(build,category)
+            tests = cbs.get_tests_by_cat(build,category)
             for test in tests:
                 test_node = bigtree_nodes.TestNode(test[0], test[1],  marker, [])
-                metrics = fake_db.get_metrics_by_test(build,category,test[0])
+                metrics = cbs.get_metrics_by_test(build,category,test[0])
                 for metric in metrics:
                     metric_node = bigtree_nodes.MetricNode(metric[0], marker, metric[1], metric[2], metric[3])
                     test_node.child_metrics.append(metric_node)
