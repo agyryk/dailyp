@@ -4,9 +4,10 @@ from pytz import timezone
 import datetime
 import json
 import time
+import logger
 
 
-class CBS():
+class CBS:
     def __init__(self):
         self.bucket = object
         self.default_baseline_build = '4.1.1-0000'
@@ -28,9 +29,9 @@ class CBS():
 
     def get_cats_by_build(self, build_number):
         result = []
-        for row in self.bucket.n1ql_query("select category from perf_daily where `build`='" + build_number + "'"):
+        for row in self.bucket.n1ql_query("select distinct category from perf_daily where `build`='" + build_number + "'"):
             result.append(row['category'].encode('utf8'))
-        return set(result)
+        return result
 
     def get_tests_by_cat(self, build_number, category):
         result = []
@@ -49,6 +50,8 @@ class CBS():
         return result
 
     def post_run(self,test_run_dict):
+        id = test_run_dict['category'] + "__" + test_run_dict['test'] + "__" + test_run_dict['build'] + "__" \
+                + test_run_dict['datetime']
         self.bucket.upsert(id,test_run_dict)
 
 

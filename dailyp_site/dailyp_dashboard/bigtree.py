@@ -1,5 +1,6 @@
 import bigtree_nodes
-import db_cbs
+import logger
+
 
 
 class BigTree():
@@ -104,7 +105,6 @@ class BigTree():
                         category.status = BigTree.STATUS_FAILED
                         break
             self.root.append(category)
-
 
 
 

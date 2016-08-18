@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django import forms
 import models
-import db_fake
+import logger
 from settings import DailypSettings
 from bigtree import BigTree
 import db_cbs
@@ -45,7 +45,7 @@ def homeView(request):
         bigtree = BigTree(cbs, home_model.active_build, home_model.baseline_build)
         for category_node in bigtree.root:
             home_model.summary.append({'name':category_node.name, 'status':category_node.status})
-            return render(request, "dashboard.html", {"model": home_model, "form_buildsSelector": buildSelectorForm})
+        return render(request, "dashboard.html", {"model": home_model, "form_buildsSelector": buildSelectorForm})
 
     home_model.debug_message = "Error connecting CBS"
     return render(request, "dashboard.html", {"model": home_model})
@@ -103,3 +103,4 @@ def testView(request):
 
     test_model.debug_message = "Error connecting CBS"
     return render(request, "dashboard.html", {"model": test_model})
+
