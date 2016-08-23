@@ -44,7 +44,17 @@ def homeView(request):
                                                active_build_selected=home_model.active_build)
         bigtree = BigTree(cbs, home_model.active_build, home_model.baseline_build)
         for category_node in bigtree.root:
-            home_model.summary.append({'name':category_node.name, 'status':category_node.status})
+            total, passed, failed, incomplete = 0,0,0,0
+            for test_node in category_node.child_tests:
+                total +=1
+                if test_node.status == BigTree.STATUS_INCOMPLETE:
+                    incomplete +=1
+                elif test_node.status == BigTree.STATUS_PASSED:
+                    passed +=1
+                elif test_node.status == BigTree.STATUS_FAILED:
+                    failed +=1
+            home_model.summary.append({'name': category_node.name, 'status': category_node.status,
+                                       'passed': passed, 'failed': failed, 'incomplete': incomplete, 'total': total})
         return render(request, "dashboard.html", {"model": home_model, "form_buildsSelector": buildSelectorForm})
 
     home_model.debug_message = "Error connecting CBS"
@@ -53,6 +63,36 @@ def homeView(request):
 # cbs = db_cbs.CBS()
 # if cbs.connect():
 # home_model.debug_message = cbs.get_metrics_by_test('4.1.1-0000','n1ql','n1ql_fdb_q2_stale_false')
+
+def composedView(request):
+    composed_model = models.ComposedModel()
+    cbs = db_cbs.CBS()
+    if cbs.connect():
+        composed_model.builds = cbs.get_all_builds()
+        composed_model.category_name = request.GET['category']
+        composed_model.active_build = request.GET['a']
+        composed_model.baseline_build = request.GET['b']
+        buildSelectorForm = FormBuildsSelector(baseline_build_selected=composed_model.baseline_build,
+                                               active_build_selected=composed_model.active_build)
+        bigtree = BigTree(cbs,composed_model.active_build, composed_model.baseline_build)
+        for category in bigtree.root:
+            if category.name == composed_model.category_name:
+                tests = list()
+                for test in category.child_tests:
+                    metrics = list ()
+                    for metric in test.child_metrics:
+                        metrics.append({'name': metric.name, 'description': metric.description,
+                                        'status': metric.status, "baseline": metric.b_value,
+                                        "current": metric.a_value, 'threshold': metric.threshold})
+                    tests.append({'name':test.name, 'title': test.title, 'status':test.status, 'snapshots': test.snapshots,
+                                 'metrics': metrics})
+
+                composed_model.summary = tests
+        return render(request, "details.html",{"model": composed_model,
+                                                        "form_buildsSelector": buildSelectorForm})
+
+    composed_model.debug_message = "Error connecting CBS"
+    return render(request, "dashboard.html", {"model": composed_model})
 
 
 def categoryView(request):

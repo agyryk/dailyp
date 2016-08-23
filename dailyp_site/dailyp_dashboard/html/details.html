@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dailyp - Category Details</title>
+</head>
+<body>
+
+
+<b>Builds:</b>
+
+<form action="/dailyp/" method="post">
+    {% csrf_token %}
+    {{ form_buildsSelector }}
+    <input type="submit" value="Submit" />
+</form>
+<br />
+<br />
+
+<b>Category: </b> {{model.category_name}} <br/>
+<br />
+<b>Status: </b>
+
+
+<b>Status:</b>
+
+    <table border="1">
+        {% for item in model.summary %}
+        <tr>
+            <td>&nbsp;{{item.name}}&nbsp;</td>
+            {% if item.status == "FAILED" %}
+                <td><b><font color="red">&nbsp;{{item.status}}&nbsp;</font></b></td>
+            {% elif item.status == "PASSED" %}
+                <td><b><font color="green">&nbsp;{{item.status}}&nbsp;</font></b></td>
+            {% else %}
+                <td><font color="DarkOrange">&nbsp;{{item.status}}&nbsp;</font></td>
+            {% endif %}
+            <td>
+                <table border="0">
+                {% for metric_item in item.metrics %}
+                    <tr>
+                        <td>
+                            {{ metric_item.description }}
+                        </td>
+                        <td>
+                     <table border="0">
+                                <tr>
+                                    <td>Baseline:</td>
+                                    <td>{{metric_item.baseline}}</td>
+                                 </tr>
+                                <tr>
+                                    <td>Current:</td>
+                                    {% if metric_item.status == "FAILED" %}
+                                        <td><b><font color = "red"> {{metric_item.current}}</font></b></td>
+                                    {% else %}
+                                        <td> {{metric_item.current}} </td>
+                                    {% endif %}
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </td>
+
+            <td>
+                <table border="0">
+
+                {% for snapshot in item.snapshots %}
+                    <tr>
+                        <td>
+                            <td>&nbsp;<a href={{ snapshot }}>snapshot</a>&nbsp;</td>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </table>
+
+
+{{ model.debug_message }}
+
+
+</body>
+</html>
+

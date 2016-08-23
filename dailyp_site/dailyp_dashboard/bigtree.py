@@ -23,13 +23,15 @@ class BigTree():
             tests = cbs.get_tests_by_cat(build,category)
             for test in tests:
                 test_node = bigtree_nodes.TestNode(test[0], test[1],  marker, [])
+                test_node.snapshots = cbs.get_snapshots_by_test(build,category,test[0])
                 metrics = cbs.get_metrics_by_test(build,category,test[0])
                 for metric in metrics:
-                    metric_node = bigtree_nodes.MetricNode(metric[0], marker, metric[1], metric[2], metric[3])
+                    metric_node = bigtree_nodes.MetricNode(metric[0], marker, metric[1], metric[2], metric[4], metric[3])
                     test_node.child_metrics.append(metric_node)
                 category_node.child_tests.append(test_node)
             tree.append(category_node)
         return tree
+
 
     def merge_tree(self):
         # merge by layer
@@ -55,6 +57,7 @@ class BigTree():
                 cat_map[category.name] = category
             for test in category.child_tests:
                 t_keypath = category.name + test.name
+                test.status = BigTree.STATUS_INCOMPLETE
                 if t_keypath in tests_map:
                     merged_test = tests_map[t_keypath]
                     merged_test.status = BigTree.STATUS_DEFAULT

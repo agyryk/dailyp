@@ -1,16 +1,13 @@
-from couchbase import Couchbase
 from couchbase.bucket import Bucket
 from pytz import timezone
 import datetime
-import json
-import time
-import logger
+
 
 
 class CBS:
     def __init__(self):
         self.bucket = object
-        self.default_baseline_build = '4.1.1-0000'
+        self.default_baseline_build = '4.5.0-2601'
         return
 
     def connect(self):
@@ -40,13 +37,21 @@ class CBS:
             result.append([row['test'].encode('utf8'), row['test_title'].encode('utf8')])
         return result
 
+    def get_snapshots_by_test(self, build_number, category, test):
+        result = []
+        for row in self.bucket.n1ql_query("select snapshots from perf_daily where `build`='" + build_number
+                                          + "' and category='" + category + "' and test='" + test + "'"):
+            for snapshot in row['snapshots']:
+                result.append(snapshot.encode('utf8'))
+        return result
+
     def get_metrics_by_test(self, build_number, category, test):
         result = []
         for row in self.bucket.n1ql_query("select metrics from perf_daily where `build`='" + build_number
                                           + "' and category='" + category + "' and test='" + test + "'"):
             for metric in row['metrics']:
                 result.append([metric['name'].encode('utf8'), metric['value'],
-                               metric['description'].encode('utf8'), metric['larger_is_better']])
+                               metric['description'].encode('utf8'), metric['larger_is_better'], metric['threshold']])
         return result
 
     def post_run(self,test_run_dict):

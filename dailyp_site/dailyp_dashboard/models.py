@@ -7,6 +7,7 @@ class HomeModel(object):
         self.debug_message = ""
 
 
+
 class CategoryModel(HomeModel):
     def __init__(self):
         super(CategoryModel, self).__init__()
@@ -18,3 +19,10 @@ class TestModel(CategoryModel):
         super(TestModel, self).__init__()
         self.test_name = "default"
         self.test_title = "default"
+
+
+class ComposedModel(HomeModel):
+    def __init__(self):
+        super(HomeModel, self).__init__()
+        self.category_name = "default"
+        self.tests = list()

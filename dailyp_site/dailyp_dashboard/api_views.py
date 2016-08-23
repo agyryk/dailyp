@@ -1,5 +1,4 @@
-from django.contrib.auth.models import User
-from django.http import Http404
+
 import models
 import db_cbs
 
@@ -12,7 +11,6 @@ class Poster(APIView):
 
     def post(self, request, format=None):
         rest_model = models.HomeModel()
-
         cbs = db_cbs.CBS()
         if cbs.connect():
             rest_model.debug_message = request.data

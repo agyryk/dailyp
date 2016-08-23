@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dayily Sanity Dashboard page</title>
+    <title>Daily Performance Dashboard</title>
 </head>
 <body>
 
@@ -23,24 +23,25 @@
     <table border="1">
         {% for item in model.summary %}
         <tr>
-            <td>&nbsp;<a href=category?category={{item.name}}&b={{model.baseline_build}}&a={{model.active_build}}>{{item.name}}</a>&nbsp;</td>
+            <td>&nbsp;<a href=details?category={{item.name}}&b={{model.baseline_build}}&a={{model.active_build}}>{{item.name}}</a>&nbsp;</td>
             {% if item.status == "FAILED" %}
-            <td><b><font color="red">{{item.status}}</font></b></td>
+                <td><b><font color="red">&nbsp;{{item.status}}&nbsp;</font></b></td>
             {% elif item.status == "PASSED" %}
-            <td><b><font color="green">{{item.status}}</font></b></td>
+                <td><b><font color="green">&nbsp;{{item.status}}&nbsp;</font></b></td>
             {% else %}
-            <td><font color="DarkOrange">{{item.status}}</font></td>
+                <td><font color="DarkOrange">&nbsp;{{item.status}}&nbsp;</font></td>
             {% endif %}
+            <td> Passed: <b><font color="green"> {{item.passed}} </font></b>,
+                 Failed: <b><font color="red"> {{item.failed}} </font></b>,
+                 Incomplete: <b><font color="orange"> {{item.incomplete}} </font></b>
+            </td>
         </tr>
         {% endfor %}
     </table>
 
-<br />
-<br />
-<br />
-<br />
 
-Debug message {{ model.debug_message }}
+{{ model.debug_message }}
+
 
 </body>
 </html>

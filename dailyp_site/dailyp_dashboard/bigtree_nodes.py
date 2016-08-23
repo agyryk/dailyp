@@ -12,19 +12,21 @@ class CategoryNode(BigTreeNode):
 
 
 class TestNode(BigTreeNode):
-    def __init__(self, name, title, build_marker, child_metrics, status='default'):
+    def __init__(self, name, title, build_marker, child_metrics, datetime, snapshots=[], status='default'):
         super(TestNode, self).__init__(name,build_marker,status)
         self.title = title
         self.child_metrics = child_metrics
+        self.snapshots = snapshots
+        self.datetime = datetime
 
 
 class MetricNode(BigTreeNode):
-    def __init__(self,name,build_marker,value,description, larger_is_better, status="default"):
+    def __init__(self,name,build_marker,value,description, larger_is_better, threshold, status="default"):
         super(MetricNode, self).__init__(name,build_marker,status)
         self.value = value
         self.description = description
         self.b_value = ""
         self.a_value = ""
         self.larger_is_better = larger_is_better
-
+        self.threshold = threshold
 
