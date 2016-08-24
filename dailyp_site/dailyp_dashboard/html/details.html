@@ -42,26 +42,30 @@
                         <td>
                             {{ metric_item.description }}
                         </td>
-                        <td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </td>
+
+
+            <td>
                      <table border="0">
+                         {% for metric_item in item.metrics %}
                                 <tr>
-                                    <td>Baseline:</td>
                                     <td>{{metric_item.baseline}}</td>
                                  </tr>
                                 <tr>
-                                    <td>Current:</td>
                                     {% if metric_item.status == "FAILED" %}
                                         <td><b><font color = "red"> {{metric_item.current}}</font></b></td>
                                     {% else %}
                                         <td> {{metric_item.current}} </td>
                                     {% endif %}
                                 </tr>
-                            </table>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </table>
+                         {% endfor %}
+                     </table>
+
             </td>
+
 
             <td>
                 <table border="0">
@@ -85,7 +89,19 @@
                 </table>
             </td>
             <td>
-                {{ item.datetime }}
+                <table border="0">
+                    <tr>
+                        <td>
+                            {{ item.baseline_datetime }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {{ item.active_datetime }}
+                        </td>
+                    </tr>
+                </table>
+
             </td>
         </tr>
         {% endfor %}

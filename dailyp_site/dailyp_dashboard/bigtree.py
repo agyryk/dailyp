@@ -25,10 +25,10 @@ class BigTree():
                 test_node = bigtree_nodes.TestNode(name=test["test_name"],
                                                    title=test["test_title"],
                                                    build_marker=marker,
-                                                   child_metrics=[],
-                                                   datetime=test["datetime"])
-                test_node.set_stapshots(cbs.get_snapshots_by_test(build,category,test_node.name, test_node.datetime))
-                metrics = cbs.get_metrics_by_test(build,category,test_node.name, test_node.datetime)
+                                                   child_metrics=[])
+                test_node.set_datetime(test["datetime"])
+                test_node.set_stapshots(cbs.get_snapshots_by_test(build,category,test_node.name, test["datetime"]))
+                metrics = cbs.get_metrics_by_test(build,category,test_node.name, test["datetime"])
                 for metric in metrics:
                     metric_node = bigtree_nodes.MetricNode(name=metric["metric_name"],
                                                            build_marker=marker,
@@ -70,6 +70,7 @@ class BigTree():
                     merged_test = tests_map[t_keypath]
                     merged_test.status = BigTree.STATUS_DEFAULT
                     merged_test.active_snapshots = test.active_snapshots
+                    merged_test.active_datetime = test.active_datetime
                     tests_map[t_keypath] = merged_test
                 else:
                     tests_map[t_keypath] = test

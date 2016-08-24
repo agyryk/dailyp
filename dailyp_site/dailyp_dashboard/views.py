@@ -84,8 +84,9 @@ def composedView(request):
                         metrics.append({'name': metric.name, 'description': metric.description,
                                         'status': metric.status, "baseline": metric.b_value,
                                         "current": metric.a_value, 'threshold': metric.threshold})
-                    tests.append({'name':test.name, 'datetime': test.datetime, 'title': test.title,
-                                  'status':test.status, 'active_snapshots': test.active_snapshots,
+                    tests.append({'name': test.name, 'active_datetime': test.active_datetime,
+                                  'baseline_datetime': test.baseline_datetime, 'title': test.title,
+                                  'status': test.status, 'active_snapshots': test.active_snapshots,
                                   'baseline_snapshots': test.baseline_snapshots, 'metrics': metrics})
                 composed_model.summary = tests
         return render(request, "details.html",{"model": composed_model,
