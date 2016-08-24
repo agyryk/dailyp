@@ -32,23 +32,25 @@ class CBS:
 
     def get_tests_by_cat(self, build_number, category):
         result = []
-        for row in self.bucket.n1ql_query("select test, test_title from perf_daily where `build`='" + build_number
-                                            + "' and category='" + category + "'"):
-            result.append([row['test'].encode('utf8'), row['test_title'].encode('utf8')])
+        for row in self.bucket.n1ql_query("select test, test_title, max(datetime) from perf_daily where `build`='" + build_number
+                                          + "' and category='" + category + "' group by test, test_title"):
+            result.append([row['test'].encode('utf8'), row['test_title'].encode('utf8'), row['$1'].encode('utf8')])
         return result
 
-    def get_snapshots_by_test(self, build_number, category, test):
+    def get_snapshots_by_test(self, build_number, category, test, datetime):
         result = []
         for row in self.bucket.n1ql_query("select snapshots from perf_daily where `build`='" + build_number
-                                          + "' and category='" + category + "' and test='" + test + "'"):
+                                          + "' and category='" + category + "' and test='" + test
+                                          + "' and datetime='" + datetime + "'"):
             for snapshot in row['snapshots']:
                 result.append(snapshot.encode('utf8'))
         return result
 
-    def get_metrics_by_test(self, build_number, category, test):
+    def get_metrics_by_test(self, build_number, category, test, datetime):
         result = []
         for row in self.bucket.n1ql_query("select metrics from perf_daily where `build`='" + build_number
-                                          + "' and category='" + category + "' and test='" + test + "'"):
+                                          + "' and category='" + category + "' and test='" + test
+                                          + "' and datetime='" + datetime + "'"):
             for metric in row['metrics']:
                 result.append([metric['name'].encode('utf8'), metric['value'],
                                metric['description'].encode('utf8'), metric['larger_is_better'], metric['threshold']])

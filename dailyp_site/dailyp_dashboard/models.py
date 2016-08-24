@@ -19,6 +19,7 @@ class TestModel(CategoryModel):
         super(TestModel, self).__init__()
         self.test_name = "default"
         self.test_title = "default"
+        self.test_datetime = ""
 
 
 class ComposedModel(HomeModel):

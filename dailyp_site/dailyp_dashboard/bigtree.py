@@ -22,16 +22,15 @@ class BigTree():
             category_node = bigtree_nodes.CategoryNode(category, marker, [])
             tests = cbs.get_tests_by_cat(build,category)
             for test in tests:
-                test_node = bigtree_nodes.TestNode(test[0], test[1],  marker, [])
-                test_node.snapshots = cbs.get_snapshots_by_test(build,category,test[0])
-                metrics = cbs.get_metrics_by_test(build,category,test[0])
+                test_node = bigtree_nodes.TestNode(test[0], test[1],  marker, [], test[2])
+                test_node.set_stapshots(cbs.get_snapshots_by_test(build,category,test_node.name, test_node.datetime))
+                metrics = cbs.get_metrics_by_test(build,category,test_node.name, test_node.datetime)
                 for metric in metrics:
                     metric_node = bigtree_nodes.MetricNode(metric[0], marker, metric[1], metric[2], metric[4], metric[3])
                     test_node.child_metrics.append(metric_node)
                 category_node.child_tests.append(test_node)
             tree.append(category_node)
         return tree
-
 
     def merge_tree(self):
         # merge by layer
@@ -61,6 +60,7 @@ class BigTree():
                 if t_keypath in tests_map:
                     merged_test = tests_map[t_keypath]
                     merged_test.status = BigTree.STATUS_DEFAULT
+                    merged_test.active_snapshots = test.active_snapshots
                     tests_map[t_keypath] = merged_test
                 else:
                     tests_map[t_keypath] = test
@@ -73,8 +73,8 @@ class BigTree():
                     else:
                         merged_metric = metrics_map[m_keypath]
                         merged_metric.a_value = metric.a_value
-                        if (bool(merged_metric.larger_is_better) == bool(merged_metric.a_value > merged_metric.b_value)) or \
-                                (merged_metric.b_value == merged_metric.a_value):
+                        if self._check_metric_condition(merged_metric.larger_is_better, merged_metric.a_value,
+                                                        merged_metric.b_value, merged_metric.threshold):
                             merged_metric.status = BigTree.STATUS_PASSED
                         else:
                             merged_metric.status = BigTree.STATUS_FAILED
@@ -101,14 +101,34 @@ class BigTree():
             for t_keypath in tests_map:
                 if t_keypath == (c_keypath + tests_map[t_keypath].name):
                     category.child_tests.append(tests_map[t_keypath])
+            category.status = BigTree.STATUS_PASSED
+            for test in category.child_tests:
+                if test.status == BigTree.STATUS_INCOMPLETE:
+                    category.status = BigTree.STATUS_INCOMPLETE
+                    break
             if category.status != BigTree.STATUS_INCOMPLETE:
-                category.status = BigTree.STATUS_PASSED
                 for test in category.child_tests:
                     if test.status == BigTree.STATUS_FAILED:
                         category.status = BigTree.STATUS_FAILED
                         break
             self.root.append(category)
 
+    def _check_metric_condition(self, lisb, a_value, b_value, threshold):
+        if a_value == b_value:
+            return True
+        if lisb:
+            if a_value < b_value:
+                if ((b_value-a_value)/b_value)*100 > threshold:
+                    print("---------------------------")
+                    print a_value
+                    print b_value
+                    print threshold
+                    return False
+        if  not lisb:
+            if b_value < a_value:
+                if ((a_value-b_value)/a_value*100) > threshold:
+                    return False
+        return True
 
 
 

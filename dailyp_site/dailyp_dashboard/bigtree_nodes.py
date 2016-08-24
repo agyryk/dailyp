@@ -12,13 +12,19 @@ class CategoryNode(BigTreeNode):
 
 
 class TestNode(BigTreeNode):
-    def __init__(self, name, title, build_marker, child_metrics, datetime, snapshots=[], status='default'):
+    def __init__(self, name, title, build_marker, child_metrics, datetime, status='default'):
         super(TestNode, self).__init__(name,build_marker,status)
         self.title = title
         self.child_metrics = child_metrics
-        self.snapshots = snapshots
+        self.baseline_snapshots = list()
+        self.active_snapshots = list()
         self.datetime = datetime
 
+    def set_stapshots(self, snapshots):
+        if self.build_marker == "active":
+            self.active_snapshots = snapshots
+        elif self.build_marker == "baseline":
+            self.baseline_snapshots = snapshots
 
 class MetricNode(BigTreeNode):
     def __init__(self,name,build_marker,value,description, larger_is_better, threshold, status="default"):

@@ -66,16 +66,27 @@
             <td>
                 <table border="0">
 
-                {% for snapshot in item.snapshots %}
+                {% for snapshot in item.baseline_snapshots %}
                     <tr>
                         <td>
-                            <td>&nbsp;<a href={{ snapshot }}>snapshot</a>&nbsp;</td>
+                            <td>&nbsp;<a href={{ snapshot }}>baseline</a>&nbsp;</td>
                         </td>
                     </tr>
                 {% endfor %}
+
+                    {% for snapshot in item.active_snapshots %}
+                    <tr>
+                        <td>
+                            <td>&nbsp;<a href={{ snapshot }}>current</a>&nbsp;</td>
+                        </td>
+                    </tr>
+                {% endfor %}
+
                 </table>
             </td>
-
+            <td>
+                {{ item.datetime }}
+            </td>
         </tr>
         {% endfor %}
     </table>
