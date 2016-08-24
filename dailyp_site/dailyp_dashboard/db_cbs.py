@@ -26,15 +26,18 @@ class CBS:
 
     def get_cats_by_build(self, build_number):
         result = []
-        for row in self.bucket.n1ql_query("select distinct category from perf_daily where `build`='" + build_number + "'"):
+        for row in self.bucket.n1ql_query("select distinct category from perf_daily where `build`='" + build_number
+                                          + "'"):
             result.append(row['category'].encode('utf8'))
         return result
 
     def get_tests_by_cat(self, build_number, category):
         result = []
-        for row in self.bucket.n1ql_query("select test, test_title, max(datetime) from perf_daily where `build`='" + build_number
-                                          + "' and category='" + category + "' group by test, test_title"):
-            result.append([row['test'].encode('utf8'), row['test_title'].encode('utf8'), row['$1'].encode('utf8')])
+        for row in self.bucket.n1ql_query("select test, test_title, max(datetime) from perf_daily where `build`='"
+                                          + build_number + "' and category='" + category
+                                          + "' group by test, test_title"):
+            result.append({"test_name": row['test'].encode('utf8'), "test_title": row['test_title'].encode('utf8'),
+                           "datetime": row['$1'].encode('utf8')})
         return result
 
     def get_snapshots_by_test(self, build_number, category, test, datetime):
@@ -52,8 +55,9 @@ class CBS:
                                           + "' and category='" + category + "' and test='" + test
                                           + "' and datetime='" + datetime + "'"):
             for metric in row['metrics']:
-                result.append([metric['name'].encode('utf8'), metric['value'],
-                               metric['description'].encode('utf8'), metric['larger_is_better'], metric['threshold']])
+                result.append({"metric_name": metric['name'].encode('utf8'),"metric_value": metric['value'],
+                               "metric_description": metric['description'].encode('utf8'),
+                               "metric_lisb": metric['larger_is_better'], "metric_threshold": metric['threshold']})
         return result
 
     def post_run(self,test_run_dict):

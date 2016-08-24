@@ -22,11 +22,20 @@ class BigTree():
             category_node = bigtree_nodes.CategoryNode(category, marker, [])
             tests = cbs.get_tests_by_cat(build,category)
             for test in tests:
-                test_node = bigtree_nodes.TestNode(test[0], test[1],  marker, [], test[2])
+                test_node = bigtree_nodes.TestNode(name=test["test_name"],
+                                                   title=test["test_title"],
+                                                   build_marker=marker,
+                                                   child_metrics=[],
+                                                   datetime=test["datetime"])
                 test_node.set_stapshots(cbs.get_snapshots_by_test(build,category,test_node.name, test_node.datetime))
                 metrics = cbs.get_metrics_by_test(build,category,test_node.name, test_node.datetime)
                 for metric in metrics:
-                    metric_node = bigtree_nodes.MetricNode(metric[0], marker, metric[1], metric[2], metric[4], metric[3])
+                    metric_node = bigtree_nodes.MetricNode(name=metric["metric_name"],
+                                                           build_marker=marker,
+                                                           value=metric["metric_value"],
+                                                           description=metric["metric_description"],
+                                                           larger_is_better=metric["metric_lisb"],
+                                                           threshold=metric["metric_threshold"])
                     test_node.child_metrics.append(metric_node)
                 category_node.child_tests.append(test_node)
             tree.append(category_node)
@@ -119,10 +128,6 @@ class BigTree():
         if lisb:
             if a_value < b_value:
                 if ((b_value-a_value)/b_value)*100 > threshold:
-                    print("---------------------------")
-                    print a_value
-                    print b_value
-                    print threshold
                     return False
         if  not lisb:
             if b_value < a_value:
