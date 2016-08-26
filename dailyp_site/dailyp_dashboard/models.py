@@ -27,3 +27,10 @@ class ComposedModel(HomeModel):
         super(HomeModel, self).__init__()
         self.category_name = "default"
         self.tests = list()
+
+
+class HistoryModel(HomeModel):
+    def __init__(self):
+        super(HomeModel, self).__init__()
+        self.category_name = "default"
+        self.test_name = "default"

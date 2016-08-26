@@ -27,7 +27,7 @@
     <table border="1">
         {% for item in model.summary %}
         <tr>
-            <td>&nbsp;{{item.name}}&nbsp;</td>
+            <td>&nbsp;{{item.title}}&nbsp;</td>
             {% if item.status == "FAILED" %}
                 <td><b><font color="red">&nbsp;{{item.status}}&nbsp;</font></b></td>
             {% elif item.status == "PASSED" %}
@@ -103,9 +103,13 @@
                 </table>
 
             </td>
+            <td>
+                <a href=../history?category={{model.category_name}}&test={{item.name}}&b={{model.baseline_build}}&a={{model.active_build}}>history</a>&nbsp;
+            </td>
         </tr>
         {% endfor %}
     </table>
+
 
 
 {{ model.debug_message }}

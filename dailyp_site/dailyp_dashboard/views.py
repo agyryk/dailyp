@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django import forms
 import models
-import logger
 from settings import DailypSettings
 from bigtree import BigTree
 import db_cbs
@@ -145,3 +144,21 @@ def testView(request):
     test_model.debug_message = "Error connecting CBS"
     return render(request, "dashboard.html", {"model": test_model})
 
+
+def historyView(request):
+    settings = DailypSettings()
+    history_model = models.HistoryModel()
+    cbs = db_cbs.CBS()
+    if cbs.connect():
+        history_model.builds = cbs.get_all_builds()
+        history_model.category_name = request.GET['category']
+        history_model.test_name = request.GET['test']
+        history_model.active_build = request.GET['a']
+        history_model.baseline_build = request.GET['b']
+        history_model.summary = cbs.get_history_by_test(history_model.category_name,history_model.test_name)
+        buildSelectorForm = FormBuildsSelector(baseline_build_selected=history_model.baseline_build,
+                                               active_build_selected=history_model.active_build)
+        return render(request, "history.html", {"model": history_model, "form_buildsSelector": buildSelectorForm})
+
+    history_model.debug_message = "Error connecting CBS"
+    return render(request, "dashboard.html", {"model": history_model})

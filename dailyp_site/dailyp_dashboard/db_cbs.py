@@ -65,6 +65,24 @@ class CBS:
                 + test_run_dict['datetime']
         self.bucket.upsert(id,test_run_dict)
 
+    def get_history_by_test(self, category, test):
+        metrics_dict = list()
+        for row in self.bucket.n1ql_query("select `build`, datetime, metrics from perf_daily where category='" +
+                                          category + "' and test='" + test + "' order by `build`" ):
+            t_build = row["build"].encode('utf8')
+            t_datetime = row["datetime"].encode('utf8')
+            metrics = row["metrics"]
+            for metric in metrics:
+                metrics_dict.append({"build": t_build, "datetime": t_datetime, "metric_name": metric["name"].encode('utf8'),
+                                     "metric_value": metric["value"],
+                                     "metric_description": metric["description"].encode('utf8')})
+        metrics_map = {}
+        for metric in metrics_dict:
+            m_name = metric["metric_name"]
+            if m_name not in metrics_map:
+                metrics_map[m_name] = list()
+            metrics_map[m_name].append(metric)
+        return metrics_map
 
     def load_tmp_data(self):
         date_time_str = datetime.datetime.now(timezone('US/Pacific')).strftime("%Y_%m_%d-%H:%M")
