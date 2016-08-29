@@ -130,7 +130,7 @@ class BigTree():
             if a_value < b_value:
                 if ((b_value-a_value)/b_value)*100 > threshold:
                     return False
-        if  not lisb:
+        if not lisb:
             if b_value < a_value:
                 if ((a_value-b_value)/a_value*100) > threshold:
                     return False
