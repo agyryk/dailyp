@@ -4,7 +4,8 @@ import models
 from settings import DailypSettings
 from bigtree import BigTree
 import db_cbs
-
+from operator import itemgetter
+import operator
 
 class FormBuildsSelector(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -54,6 +55,8 @@ def homeView(request):
                     failed +=1
             home_model.summary.append({'name': category_node.name, 'status': category_node.status,
                                        'passed': passed, 'failed': failed, 'incomplete': incomplete, 'total': total})
+
+            home_model.summary.sort(key=operator.itemgetter('name'), reverse=True)
         return render(request, "dashboard.html", {"model": home_model, "form_buildsSelector": buildSelectorForm})
 
     home_model.debug_message = "Error connecting CBS"
@@ -88,6 +91,7 @@ def composedView(request):
                                   'status': test.status, 'active_snapshots': test.active_snapshots,
                                   'baseline_snapshots': test.baseline_snapshots, 'metrics': metrics})
                 composed_model.summary = tests
+                composed_model.summary = sorted(composed_model.summary, key=itemgetter('title'))
         return render(request, "details.html",{"model": composed_model,
                                                         "form_buildsSelector": buildSelectorForm})
 
