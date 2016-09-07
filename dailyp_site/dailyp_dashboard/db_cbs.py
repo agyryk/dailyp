@@ -3,7 +3,6 @@ from pytz import timezone
 import datetime
 
 
-
 class CBS:
     def __init__(self):
         self.bucket = object

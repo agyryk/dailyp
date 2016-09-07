@@ -63,28 +63,31 @@
                                 </tr>
                          {% endfor %}
                      </table>
-
             </td>
 
-
             <td>
+
                 <table border="0">
 
-                {% for snapshot in item.baseline_snapshots %}
-                    <tr>
-                        <td>
-                            <td>&nbsp;<a href={{ snapshot }}>baseline</a>&nbsp;</td>
-                        </td>
-                    </tr>
-                {% endfor %}
 
-                    {% for snapshot in item.active_snapshots %}
                     <tr>
                         <td>
-                            <td>&nbsp;<a href={{ snapshot }}>current</a>&nbsp;</td>
+                            {% for snapshot in item.baseline_snapshots %}
+                            <a href={{ snapshot }}>baseline</a>&nbsp
+                            {% endfor %}
                         </td>
                     </tr>
-                {% endfor %}
+
+
+
+                    <tr>
+                        <td>
+                            {% for  snapshot in item.active_snapshots %}
+                            <a href={{ snapshot }}>current</a>&nbsp
+                            {% endfor %}
+                        </td>
+                    </tr>
+
 
                 </table>
             </td>

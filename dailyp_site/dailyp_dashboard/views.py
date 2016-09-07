@@ -3,7 +3,9 @@ from django import forms
 import models
 from settings import DailypSettings
 from bigtree import BigTree
-import db_cbs
+#import db_cbs
+#import db_cbs_kv
+from db_cbs_kv import CBS
 from operator import itemgetter
 import operator
 
@@ -17,7 +19,7 @@ class FormBuildsSelector(forms.Form):
         self.fields['Active Build'] = forms.TypedChoiceField(choices=builds_choices, initial = active_build_selected)
 
     def get_build_choices(self):
-        cbs = db_cbs.CBS()
+        cbs = CBS()
         if cbs.connect():
             builds = cbs.get_all_builds()
             build_choices = []
@@ -28,9 +30,10 @@ class FormBuildsSelector(forms.Form):
 
 
 def homeView(request):
+
     settings = DailypSettings()
     home_model = models.HomeModel()
-    cbs = db_cbs.CBS()
+    cbs = CBS()
     if cbs.connect():
         home_model.builds = cbs.get_all_builds()
         if request.method == 'POST':
@@ -68,7 +71,7 @@ def homeView(request):
 
 def composedView(request):
     composed_model = models.ComposedModel()
-    cbs = db_cbs.CBS()
+    cbs = CBS()
     if cbs.connect():
         composed_model.builds = cbs.get_all_builds()
         composed_model.category_name = request.GET['category']
@@ -102,7 +105,7 @@ def composedView(request):
 def categoryView(request):
     settings = DailypSettings()
     cat_model = models.CategoryModel()
-    cbs = db_cbs.CBS()
+    cbs = CBS()
     if cbs.connect():
         cat_model.builds = cbs.get_all_builds()
         cat_model.category_name = request.GET['category']
@@ -124,7 +127,7 @@ def categoryView(request):
 def testView(request):
     settings = DailypSettings()
     test_model = models.CategoryModel()
-    cbs = db_cbs.CBS()
+    cbs = CBS()
     if cbs.connect():
         test_model.builds = cbs.get_all_builds()
         test_model.category_name = request.GET['category']
@@ -152,7 +155,7 @@ def testView(request):
 def historyView(request):
     settings = DailypSettings()
     history_model = models.HistoryModel()
-    cbs = db_cbs.CBS()
+    cbs = CBS()
     if cbs.connect():
         history_model.builds = cbs.get_all_builds()
         history_model.category_name = request.GET['category']
