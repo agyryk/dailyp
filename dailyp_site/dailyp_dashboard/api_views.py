@@ -1,6 +1,6 @@
 
 import models
-import db_cbs
+import db_cbs_n1ql
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ class Poster(APIView):
 
     def post(self, request, format=None):
         rest_model = models.HomeModel()
-        cbs = db_cbs.CBS()
+        cbs = db_cbs_n1ql.CBS()
         if cbs.connect():
             rest_model.debug_message = request.data
             cbs.post_run(request.data)

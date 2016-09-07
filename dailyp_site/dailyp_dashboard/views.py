@@ -3,8 +3,6 @@ from django import forms
 import models
 from settings import DailypSettings
 from bigtree import BigTree
-#import db_cbs
-#import db_cbs_kv
 from db_cbs_kv import CBS
 from operator import itemgetter
 import operator
@@ -30,7 +28,6 @@ class FormBuildsSelector(forms.Form):
 
 
 def homeView(request):
-
     settings = DailypSettings()
     home_model = models.HomeModel()
     cbs = CBS()
@@ -64,10 +61,6 @@ def homeView(request):
 
     home_model.debug_message = "Error connecting CBS"
     return render(request, "dashboard.html", {"model": home_model})
-
-# cbs = db_cbs.CBS()
-# if cbs.connect():
-# home_model.debug_message = cbs.get_metrics_by_test('4.1.1-0000','n1ql','n1ql_fdb_q2_stale_false')
 
 def composedView(request):
     composed_model = models.ComposedModel()
