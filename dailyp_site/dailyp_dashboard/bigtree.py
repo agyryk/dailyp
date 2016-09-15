@@ -62,7 +62,7 @@ class BigTree():
             if category.name in cat_map:
                 merged_category = cat_map[category.name]
                 merged_category.status = BigTree.STATUS_DEFAULT
-                cat_map[category.name] = category
+            cat_map[category.name] = category
             for test in category.child_tests:
                 t_keypath = category.name + test.name
                 test.status = BigTree.STATUS_INCOMPLETE
