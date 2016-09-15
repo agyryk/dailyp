@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django import forms
 import models
-from settings import DailypSettings
 from bigtree import BigTree
 from db_cbs_kv import CBS
 from operator import itemgetter
 import operator
+
 
 class FormBuildsSelector(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -28,7 +28,6 @@ class FormBuildsSelector(forms.Form):
 
 
 def homeView(request):
-    settings = DailypSettings()
     home_model = models.HomeModel()
     cbs = CBS()
     if cbs.connect():
@@ -69,6 +68,7 @@ def homeView(request):
     home_model.debug_message = "Error connecting CBS"
     return render(request, "dashboard.html", {"model": home_model})
 
+
 def composedView(request):
     composed_model = models.ComposedModel()
     cbs = CBS()
@@ -102,58 +102,7 @@ def composedView(request):
     return render(request, "dashboard.html", {"model": composed_model})
 
 
-def categoryView(request):
-    settings = DailypSettings()
-    cat_model = models.CategoryModel()
-    cbs = CBS()
-    if cbs.connect():
-        cat_model.builds = cbs.get_all_builds()
-        cat_model.category_name = request.GET['category']
-        cat_model.active_build = request.GET['a']
-        cat_model.baseline_build = request.GET['b']
-        buildSelectorForm = FormBuildsSelector(baseline_build_selected=cat_model.baseline_build,
-                                               active_build_selected=cat_model.active_build)
-        bigtree = BigTree(cbs,cat_model.active_build, cat_model.baseline_build)
-        for category in bigtree.root:
-            if category.name == cat_model.category_name:
-                for test in category.child_tests:
-                    cat_model.summary.append({'name':test.name, 'title': test.title, 'status':test.status})
-        return render(request, "category_details.html", {"model": cat_model, "form_buildsSelector": buildSelectorForm})
-
-    cat_model.debug_message = "Error connecting CBS"
-    return render(request, "dashboard.html", {"model": cat_model})
-
-
-def testView(request):
-    settings = DailypSettings()
-    test_model = models.CategoryModel()
-    cbs = CBS()
-    if cbs.connect():
-        test_model.builds = cbs.get_all_builds()
-        test_model.category_name = request.GET['category']
-        test_model.test_name = request.GET['test']
-        test_model.active_build = request.GET['a']
-        test_model.baseline_build = request.GET['b']
-        buildSelectorForm = FormBuildsSelector(baseline_build_selected=test_model.baseline_build,
-                                               active_build_selected=test_model.active_build)
-        bigtree = BigTree(cbs,test_model.active_build, test_model.baseline_build)
-        for category in bigtree.root:
-            if category.name == test_model.category_name:
-                for test in category.child_tests:
-                    if test.name == test_model.test_name:
-                        test_model.test_title = test.title
-                        for metric in test.child_metrics:
-                            test_model.summary.append({'name':metric.name, 'description': metric.description,
-                                                       'status':metric.status, "baseline": metric.b_value,
-                                                       "current": metric.a_value})
-        return render(request, "test_details.html", {"model": test_model, "form_buildsSelector": buildSelectorForm})
-
-    test_model.debug_message = "Error connecting CBS"
-    return render(request, "dashboard.html", {"model": test_model})
-
-
 def historyView(request):
-    settings = DailypSettings()
     history_model = models.HistoryModel()
     cbs = CBS()
     if cbs.connect():
