@@ -37,8 +37,15 @@ def homeView(request):
             home_model.active_build =  request.POST.get('Active Build','')
             home_model.baseline_build = request.POST.get('Baseline Build','')
         else:
-            home_model.active_build = sorted(home_model.builds)[len(home_model.builds)-1]
-            home_model.baseline_build = cbs.default_baseline_build
+            if 'a' in request.GET:
+                home_model.active_build = request.GET['a']
+            else:
+                home_model.active_build = sorted(home_model.builds)[len(home_model.builds)-1]
+
+            if 'b' in request.GET:
+                home_model.baseline_build = request.GET['b']
+            else:
+                home_model.baseline_build = cbs.default_baseline_build
 
         buildSelectorForm = FormBuildsSelector(baseline_build_selected=home_model.baseline_build,
                                                active_build_selected=home_model.active_build)
