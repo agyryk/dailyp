@@ -17,6 +17,4 @@ RUN pip install djangorestframework
 RUN pip install couchbase
 RUN pip install pytz
 
-
-
-CMD ["python","/dailyp_site/manage.py","runserver", "0:8000"]
+CMD ["python","/dailyp_site/manage.py","runserver", "0:80"]

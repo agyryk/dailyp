@@ -7,4 +7,3 @@ urlpatterns = [
     url(r'^details/$', views.composedView, name='composedView'),
     url(r'^history/$', views.historyView, name='historyView'),
 ]
-
