@@ -124,15 +124,17 @@ class BigTree():
             self.root.append(category)
 
     def _check_metric_condition(self, lisb, a_value, b_value, threshold):
+        b_value = float(b_value)
+        a_value = float(a_value)
         if a_value == b_value:
             return True
         if lisb:
             if a_value < b_value:
-                if ((b_value-a_value)/b_value)*100 > threshold:
+                if abs(((b_value-a_value)/b_value)*100) > threshold:
                     return False
         if not lisb:
             if b_value < a_value:
-                if ((a_value-b_value)/a_value*100) > threshold:
+                if abs(((a_value-b_value)/a_value)*100) > threshold:
                     return False
         return True
 
